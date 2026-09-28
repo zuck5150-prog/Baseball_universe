@@ -1,0 +1,4 @@
+import type {SimPlayer} from './players';
+import type {DailyGamePlan} from './gamePlan';
+export function applyLockedPlan(players:SimPlayer[],plan:DailyGamePlan){const order=new Map(plan.lineupIds.map((id,i)=>[id,i]));return players.map(p=>{if(p.teamId!==plan.teamId)return p;const slot=order.get(p.id);if(slot!==undefined)return{...p,contact:p.contact+(9-slot)*20,power:p.power+(9-slot)*5,discipline:p.discipline+(9-slot)*5};if(p.id===plan.starterId)return{...p,stamina:p.stamina+500,pitching:p.pitching+50,control:p.control+50};if(plan.unavailableRelieverIds.includes(p.id))return{...p,health:0};return p})}
+export function loadLockedPlan(universeId:string,date:string):DailyGamePlan|undefined{if(typeof window==='undefined')return;const raw=localStorage.getItem(`gameplan:${universeId}:${date}`);if(!raw)return;try{return JSON.parse(raw) as DailyGamePlan}catch{return}}
