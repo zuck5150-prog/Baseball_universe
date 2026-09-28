@@ -1,0 +1,5 @@
+import type {SimPlayer} from './players';import type {DailyGamePlan} from './gamePlan';
+export function pitchesForPlateAppearance(result:'OUT'|'BB'|'1B'|'2B'|'3B'|'HR',seed:number){const base=result==='BB'?6:result==='OUT'?4:5;return Math.max(1,base+(seed%3)-1)}
+export function starterHookReason(pitches:number,inning:number,runsAllowed:number,plan:DailyGamePlan){if(pitches>=plan.pitchLimit)return'PITCH_LIMIT';if(runsAllowed>=6)return'PERFORMANCE';if(inning>=8&&pitches>=85)return'LATE_GAME';return null}
+export function relieverScore(p:SimPlayer,inning:number,lead:number){let score=p.pitching*.55+p.control*.3-(p.fatigue??0)*.35;if(inning>=8&&Math.abs(lead)<=3&&p.position==='CP')score+=18;if(inning<8&&p.position==='RP')score+=5;return score}
+export function chooseReliever(players:SimPlayer[],ids:string[],inning:number,lead:number){return ids.map(id=>players.find(p=>p.id===id)).filter(Boolean).sort((a:any,b:any)=>relieverScore(b,inning,lead)-relieverScore(a,inning,lead))[0] as SimPlayer|undefined}
