@@ -1,0 +1,4 @@
+export type RivalAsset={id:string;name:string;position:string;ratings?:Record<string,number>};
+const pitching=(p:RivalAsset)=>['P','SP','RP','CP'].includes(p.position);
+export function rivalAssetValue(p:RivalAsset){const r=p.ratings??{};return pitching(p)?(r.pitching??35)*.45+(r.control??35)*.3+(r.stamina??35)*.15:(r.contact??50)*.25+(r.power??50)*.25+(r.discipline??50)*.15+(r.defense??50)*.15+(r.speed??50)*.1}
+export function buildRivalReturnPackage(target:RivalAsset,roster:RivalAsset[]){const targetValue=rivalAssetValue(target);const pool=[...roster].sort((a,b)=>rivalAssetValue(a)-rivalAssetValue(b));let total=0;const selected:RivalAsset[]=[];for(const p of pool){if(selected.length>=3)break;const v=rivalAssetValue(p);if(v>targetValue*1.25&&selected.length===0)continue;selected.push(p);total+=v;if(total>=targetValue*.9)break}if(!selected.length&&pool.length)selected.push(pool[Math.floor(pool.length/2)]);return selected}
