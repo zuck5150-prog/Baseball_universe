@@ -1,0 +1,1 @@
+export const MANAGED_GAME_BUILD_VERSION = '2026-09-28.1';
