@@ -1,0 +1,6 @@
+import type { BoxScore, BattingLine } from './boxscore';
+import type { SimPlayer } from './players';
+export interface BattingStats extends BattingLine { games:number }
+export function cumulativeBatting(boxes:BoxScore[]):Record<string,BattingStats>{const out:Record<string,BattingStats>={};for(const box of boxes){for(const line of [...box.awayBatting,...box.homeBatting]){const s=out[line.playerId]||{playerId:line.playerId,games:0,ab:0,r:0,h:0,doubles:0,triples:0,hr:0,rbi:0,bb:0};s.games++;s.ab+=line.ab;s.r+=line.r;s.h+=line.h;s.doubles+=line.doubles;s.triples+=line.triples;s.hr+=line.hr;s.rbi+=line.rbi;s.bb+=line.bb;out[line.playerId]=s}}return out}
+export function average(s:BattingStats){return s.ab?s.h/s.ab:0}export function obp(s:BattingStats){return s.ab+s.bb?(s.h+s.bb)/(s.ab+s.bb):0}export function slug(s:BattingStats){return s.ab?(s.h-s.doubles-s.triples-s.hr+2*s.doubles+3*s.triples+4*s.hr)/s.ab:0}
+export function battingLeaders(boxes:BoxScore[],players:SimPlayer[],key:'AVG'|'HR'|'RBI',limit=5){const stats=Object.values(cumulativeBatting(boxes));return stats.sort((a,b)=>key==='AVG'?average(b)-average(a):key==='HR'?b.hr-a.hr:b.rbi-a.rbi).slice(0,limit).map(s=>({player:players.find(p=>p.id===s.playerId)!,stats:s,value:key==='AVG'?average(s):key==='HR'?s.hr:s.rbi}))}
