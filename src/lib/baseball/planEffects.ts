@@ -1,0 +1,2 @@
+import type {DailyGamePlan} from './gamePlan';
+export function planEffects(plan:DailyGamePlan){let offense=0,defense=0;if(plan.baserunning==='AGGRESSIVE')offense+=2;if(plan.baserunning==='CONSERVATIVE')offense-=1;if(plan.steals==='AGGRESSIVE')offense+=1;if(plan.bunts==='AGGRESSIVE')offense-=1;if(plan.platoon)offense+=1;if(plan.defenseLate==='AGGRESSIVE')defense+=2;if(plan.defenseLate==='CONSERVATIVE')defense-=1;return{offense,defense}}
